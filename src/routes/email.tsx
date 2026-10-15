@@ -26,11 +26,12 @@ export const Route = createFileRoute("/email")({
 const TONES = ["Professional", "Friendly", "Formal", "Persuasive", "Apologetic", "Concise"];
 const PURPOSES = ["Follow-up", "Meeting recap", "Request", "Status update", "Introduction", "Thank you", "Reminder", "Decline"];
 
+type Errs = { keyPoints?: string; recipient?: string };
 function EmailPage() {
   const ctx = useStore((s) => s.emailContext);
   const emails = useStore((s) => s.emails);
   const [form, setForm] = useState({ purpose: "Follow-up", tone: "Professional", recipient: "", keyPoints: "", context: "" });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Errs>({});
   const [loading, setLoading] = useState(false);
   const [draft, setDraft] = useState<{ id?: string; subject: string; body: string } | null>(null);
 
@@ -45,7 +46,7 @@ function EmailPage() {
   const set = (k: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   async function run() {
-    const e: Record<string, string> = {};
+    const e: Errs = {};
     if (form.keyPoints.trim().length < 5) e.keyPoints = "Add a few key points (at least 5 characters).";
     if (form.recipient.length > 120) e.recipient = "Recipient name is too long.";
     setErrors(e);
@@ -63,7 +64,7 @@ function EmailPage() {
 
   function save() {
     if (!draft) return;
-    if (!draft.subject.trim() || !draft.body.trim()) return toast.error("Subject and body can't be empty.");
+    if (!draft.subject.trim() || !draft.body.trim()) { toast.error("Subject and body can't be empty."); return; }
     const id = draft.id ?? uid();
     setState((s) => ({
       emails: [

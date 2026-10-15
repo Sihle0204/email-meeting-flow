@@ -31,11 +31,12 @@ const COLS: { key: Status; label: string }[] = [
   { key: "done", label: "Done" },
 ];
 
+type Errs = { title?: string; estimate?: string };
 function TasksPage() {
   const tasks = useStore((s) => s.tasks);
   const navigate = useNavigate();
   const [edit, setEdit] = useState<Task | null>(null);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Errs>({});
   const [hours, setHours] = useState(6);
   const [loading, setLoading] = useState(false);
   const [advice, setAdvice] = useState("");
@@ -43,7 +44,7 @@ function TasksPage() {
 
   function saveTask() {
     if (!edit) return;
-    const e: Record<string, string> = {};
+    const e: Errs = {};
     if (!edit.title.trim()) e.title = "Title is required.";
     if (edit.title.length > 300) e.title = "Keep the title under 300 characters.";
     if (!(edit.estimate > 0 && edit.estimate <= 100)) e.estimate = "Estimate must be between 0 and 100 hours.";
@@ -57,7 +58,7 @@ function TasksPage() {
 
   async function plan() {
     const open = tasks.filter((t) => t.status !== "done");
-    if (!open.length) return toast.error("No open tasks to plan.");
+    if (!open.length) { toast.error("No open tasks to plan."); return; }
     setLoading(true);
     try {
       const r = await planTasks({ data: { hoursPerDay: hours, tasks: open.map(({ id, title, due, priority, estimate }) => ({ id, title, due, priority, estimate })) } });

@@ -25,16 +25,17 @@ export const Route = createFileRoute("/meetings")({
 type Draft = Omit<Meeting, "createdAt">;
 const empty = (): Draft => ({ id: uid(), title: "", date: new Date().toISOString().slice(0, 10), notes: "", summary: "", decisions: [], actionItems: [] });
 
+type Errs = { title?: string; notes?: string };
 function MeetingsPage() {
   const meetings = useStore((s) => s.meetings);
   const navigate = useNavigate();
   const [m, setM] = useState<Draft>(empty);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Errs>({});
   const [loading, setLoading] = useState(false);
   const hasResult = !!m.summary;
 
   async function run() {
-    const e: Record<string, string> = {};
+    const e: Errs = {};
     if (!m.title.trim()) e.title = "Give the meeting a title.";
     if (m.notes.trim().length < 30) e.notes = "Paste at least a few sentences of notes (30+ characters).";
     setErrors(e);
@@ -57,7 +58,7 @@ function MeetingsPage() {
 
   function sendToPlanner(src: Draft) {
     const items = src.actionItems.filter((a) => a.task.trim());
-    if (!items.length) return toast.error("No action items to send.");
+    if (!items.length) { toast.error("No action items to send."); return; }
     setState((s) => ({
       tasks: [
         ...items.map((a) => ({

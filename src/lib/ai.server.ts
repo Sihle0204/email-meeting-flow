@@ -17,7 +17,7 @@ function runIdFetch() {
 
 /** Streams a Responses call server-side and returns parsed JSON. */
 export async function askJson<T>(instructions: string, prompt: string): Promise<T> {
-  const apiKey = process.env.LOVABLE_API_KEY;
+  const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) throw new Error("AI is not configured.");
   const provider = createOpenAI({
     baseURL: GATEWAY,

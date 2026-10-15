@@ -46,7 +46,7 @@ export function CopyButton({ text, label = "Copy" }: { text: string; label?: str
   );
 }
 
-export function FieldError({ msg }: { msg?: string }) {
+export function FieldError({ msg }: { msg?: string | undefined }) {
   return msg ? <p className="mt-1 text-xs text-destructive">{msg}</p> : null;
 }
 
