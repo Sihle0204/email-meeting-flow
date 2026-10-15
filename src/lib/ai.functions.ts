@@ -10,7 +10,7 @@ const emailInput = z.object({
 });
 
 export const generateEmail = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => emailInput.parse(d))
+  .validator((d: unknown) => emailInput.parse(d))
   .handler(async ({ data }) => {
     const { askJson } = await import("./ai.server");
     const r = await askJson<{ subject: string; body: string }>(
@@ -30,7 +30,7 @@ const meetingInput = z.object({
 export type ActionItem = { task: string; owner: string; due: string; priority: "high" | "medium" | "low" };
 
 export const summarizeMeeting = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => meetingInput.parse(d))
+  .validator((d: unknown) => meetingInput.parse(d))
   .handler(async ({ data }) => {
     const { askJson } = await import("./ai.server");
     const today = new Date().toISOString().slice(0, 10);
@@ -71,7 +71,7 @@ const planInput = z.object({
 });
 
 export const planTasks = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => planInput.parse(d))
+  .validator((d: unknown) => planInput.parse(d))
   .handler(async ({ data }) => {
     const { askJson } = await import("./ai.server");
     const today = new Date().toISOString().slice(0, 10);
