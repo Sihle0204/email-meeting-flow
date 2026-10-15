@@ -8,3 +8,6 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- App data (emails, meetings, tasks) lives in a localStorage store at src/lib/store.ts — no auth/backend was requested.
+- AI calls go through server functions in src/lib/ai.functions.ts, with gateway access only in src/lib/ai.server.ts — keeps the API key server-side.
